@@ -39,7 +39,7 @@ def register(request):
         if form.is_valid():
             new_user = form.save()
             new_user = authenticate(username=form.cleaned_data['username'],
-                                    password=form.cleaned_data['password'],
+                                    password=form.cleaned_data['password1'],
                                     )
             login(request, new_user)
 

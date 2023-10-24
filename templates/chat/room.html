@@ -46,5 +46,41 @@
             messageInputDom.value = '';
         };
     </script>
+
+    <br>
+    <br>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div id="roomuser-list" class="list-group">
+                <a href="" class="list-group-item disabled">
+                    <h4 class="list-group-item-heading">All Users in Chat Room</h4>
+                    {# Users go here #}
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
+
+<script>
+    let sessionKey = '{{ request.session.session_key }}';
+    let currentUser = '{{ request.user.username }}';
+    let room = window.location.href.match(/\/chat\/(\d+)/)[1];
+
+    let roomuserList = $('#roomuser-list');
+
+    function updateChatRoomUserList() {
+        $.getJSON('/chat/api/v1/roomuser?room_name='+room, function (data) {
+            roomuserList.children('.roomuser').remove();
+            for (let i = 0; i < data.length; i++) {
+                const userItem = `<a class="list-group-item user">${data[i]['user']}</a>`;
+                $(userItem).appendTo('#roomuser-list');
+            }
+        });
+    }
+    $(document).ready(function () {
+        updateChatRoomUserList();
+    });
+</script>
+
 {% endblock %}

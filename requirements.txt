@@ -1,0 +1,5 @@
+django
+channels["daphne"]
+djangorestframework
+markdown
+django-filter

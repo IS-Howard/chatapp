@@ -6,4 +6,4 @@ class ChatRoom(models.Model):
 
 class ChatRoomMembership(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    chat_room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE)
+    chat_room = models.CharField(max_length=100)
