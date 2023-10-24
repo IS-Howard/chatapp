@@ -5,9 +5,9 @@
 
 {% block content %}
 <div class="container">
-    <h3>Enter Chat Room</h3><br>
+    <h2>Enter Chat Room</h3><br>
     <input id="room-name-input" type="text" size="50">
-    <input id="room-name-submit" type="button" value="Enter">
+    <input id="room-name-submit" type="button" value="Enter" class="btn btn-info btn">
 
     <script>
         document.querySelector('#room-name-input').focus();
@@ -40,6 +40,7 @@
     <br>
     <br>
 
+    <h2>Private Chat</h3><br>
     <div class="row">
         <div class="col-md-4">
             <div id="user-list" class="list-group">
@@ -48,6 +49,33 @@
                     {# Users go here #}
                 </a>
             </div>
+        </div>
+        <div class="col-md-8">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h4 class="panel-title">Private Chat</h4>
+                </div>
+                <div>
+                    <ul id="messages" class="messages">
+                        {# Messages go here #}
+                    </ul>
+                </div>
+                <div class="panel-footer">
+                    <div class="input-group">
+                        <input id="chat-input" type="text"
+                               class="form-control input"
+                               placeholder="Type your message here ..."
+                               maxlength="500">
+                        <span class="input-group-btn">
+                        <button class="btn btn-info btn"
+                                id="btn-send">
+                            Send</button>
+                    </span>
+                    </div>
+                </div>
+            </div>
+
+
         </div>
     </div>
 </div>
