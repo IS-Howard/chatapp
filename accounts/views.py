@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from .forms import SignUpForm
 
 
@@ -39,7 +39,7 @@ def register(request):
         if form.is_valid():
             new_user = form.save()
             new_user = authenticate(username=form.cleaned_data['username'],
-                                    password=form.cleaned_data['password1'],
+                                    password=form.cleaned_data['password'],
                                     )
             login(request, new_user)
 
@@ -49,3 +49,7 @@ def register(request):
         form = SignUpForm()
 
     return render(request, 'accounts/register.html', {'form': form})
+
+def custom_logout(request):
+    logout(request)
+    return HttpResponseRedirect(reverse('home'))
