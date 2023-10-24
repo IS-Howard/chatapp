@@ -1,1 +1,0 @@
-http://localhost:8000/chat/api/v1/roomuser/?room_name=1

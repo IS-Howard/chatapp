@@ -11,6 +11,7 @@
     <input id="chat-message-submit" type="button" value="Send">
     {{ room_name|json_script:"room-name" }}
     <script>
+        let currentUser = '{{ request.user.username }}';
         const roomName = JSON.parse(document.getElementById('room-name').textContent);
 
         const chatSocket = new WebSocket(
@@ -23,7 +24,12 @@
 
         chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
-            document.querySelector('#chat-log').value += (data.message + '\n');
+            const message = data.message;
+            const username = data.username;
+
+            // Determine whether the message sender is the current user
+            const senderText = username === currentUser ? 'YOU' : username;
+            document.querySelector('#chat-log').value += (senderText + ': ' + message + '\n');
         };
 
         chatSocket.onclose = function(e) {
@@ -41,7 +47,8 @@
             const messageInputDom = document.querySelector('#chat-message-input');
             const message = messageInputDom.value;
             chatSocket.send(JSON.stringify({
-                'message': message
+                'message': message,
+                'username': currentUser
             }));
             messageInputDom.value = '';
         };
@@ -64,8 +71,7 @@
 
 <script>
     let sessionKey = '{{ request.session.session_key }}';
-    let currentUser = '{{ request.user.username }}';
-    let room = window.location.href.match(/\/chat\/(\d+)/)[1];
+    let room = roomName;
 
     let roomuserList = $('#roomuser-list');
 
