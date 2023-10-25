@@ -5,10 +5,36 @@
 
 {% block content %}
 <div class="container">
-    <h3>ChatRoom</h3>
-    <textarea id="chat-log" cols="100" rows="20"></textarea><br>
+
+    <div class="col-md-8">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h4 class="panel-title">Chat Room</h4>
+            </div>
+            <div>
+                <ul id="messages" class="messages">
+                    {# Messages go here #}
+                </ul>
+            </div>
+            <div class="panel-footer">
+                <div class="input-group">
+                    <input id="chat-input" type="text"
+                           class="form-control input"
+                           placeholder="Type your message here ..."
+                           maxlength="500">
+                    <span class="input-group-btn">
+                    <button class="btn btn-info btn"
+                            id="btn-send">
+                        Send</button>
+                </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- <textarea id="chat-log" cols="100" rows="20"></textarea><br>
     <input id="chat-message-input" type="text" size="80">
-    <input id="chat-message-submit" type="button" value="Send">
+    <input id="chat-message-submit" type="button" value="Send"> -->
     {{ room_name|json_script:"room-name" }}
     <script>
         let currentUser = '{{ request.user.username }}';
@@ -22,29 +48,41 @@
             + '/'
         );
 
+        function drawMessage(message) {
+            let position = 'left';
+            if (message.username === currentUser){
+                position = 'right';
+                $(message).username = 'YOU';
+            }
+            const messageItem = `
+                    <li class="message ${position}">
+                        <div class="avatar">${message.username}</div>
+                            <div class="text_wrapper">
+                                <div class="text">${message.message}<br>
+                            </div>
+                        </div>
+                    </li>`;
+            $(messageItem).appendTo('#messages');
+        }
+
         chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
-            const message = data.message;
-            const username = data.username;
-
-            // Determine whether the message sender is the current user
-            const senderText = username === currentUser ? 'YOU' : username;
-            document.querySelector('#chat-log').value += (senderText + ': ' + message + '\n');
+            drawMessage(data);
         };
 
         chatSocket.onclose = function(e) {
             console.error('Chat socket closed unexpectedly');
         };
 
-        document.querySelector('#chat-message-input').focus();
-        document.querySelector('#chat-message-input').onkeyup = function(e) {
+        document.querySelector('#chat-input').focus();
+        document.querySelector('#chat-input').onkeyup = function(e) {
             if (e.keyCode === 13) {  // enter, return
-                document.querySelector('#chat-message-submit').click();
+                document.querySelector('#btn-send').click();
             }
         };
 
-        document.querySelector('#chat-message-submit').onclick = function(e) {
-            const messageInputDom = document.querySelector('#chat-message-input');
+        document.querySelector('#btn-send').onclick = function(e) {
+            const messageInputDom = document.querySelector('#chat-input');
             const message = messageInputDom.value;
             chatSocket.send(JSON.stringify({
                 'message': message,
@@ -75,11 +113,20 @@
 
     let roomuserList = $('#roomuser-list');
 
+    // chatSocket.onmessage = function(e) {
+    //     const data = JSON.parse(e.data);
+    //     console.log('Received WebSocket event:', data);
+    //     if (data.event === 'new_member') {
+    //         console.log('New member joined:', data.username);
+    //         // Add code to display the new member message in your UI
+    //     }
+    // };
+
     function updateChatRoomUserList() {
         $.getJSON('/chat/api/v1/roomuser?room_name='+room, function (data) {
             roomuserList.children('.roomuser').remove();
             for (let i = 0; i < data.length; i++) {
-                const userItem = `<a class="list-group-item user">${data[i]['user']}</a>`;
+                const userItem = `<a class="list-group-item user" id="${data[i]['user']}">${data[i]['user']}</a>`;
                 $(userItem).appendTo('#roomuser-list');
             }
         });
