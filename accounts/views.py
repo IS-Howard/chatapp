@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
 from .forms import SignUpForm
 
 
@@ -24,9 +25,7 @@ def loginView(request):
                 return HttpResponse("Account Not Active")
         else:
             context = {'notfound': True}
-            print(
-                f"NO ACCOUNT FOUND WITH USERNAME {username} AND PASSWORD {password}")
-            print(context)
+            messages.error(request,'username or password not correct')
             return render(request, 'accounts/login.html', context)
 
     else:

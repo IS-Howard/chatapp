@@ -121,6 +121,14 @@
             {% csrf_token %}
             <input type="text" placeholder="username" name="username" />
             <input type="password" placeholder="password" name="password" />
+            {% for message in messages %}
+    
+                <div class="alert alert-success">
+                    <a class="close" href="#" data-dismiss="alert">×</a>
+                    {{ message }}
+                </div>
+
+            {% endfor %}
             <button>login</button>
             <p class="message">Not registered? <a href="{% url 'accounts:register' %}">Create an account</a></p>
         </form>
